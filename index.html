@@ -1,0 +1,31 @@
+<style>
+input {
+  margin-right: 32px;
+}
+</style>
+<h1>Identity: Find the number 1 by using arithemtic operators</h1>
+
+<form id = 'id_form'>
+<label for="add">+</label><input id="add"      type="checkbox" name="add" checked>     
+<label for="subtract">-</label><input id="subtract" type="checkbox" name="subtract" checked>
+<label for="multiply">*</label><input id="multiply" type="checkbox" name="multiply" checked>
+<label for="divide">/</label><input id="divide"   type="checkbox" name="divide" checked>  
+<label for="exponent">^ (makes things much easier)</label><input id="exponent" type="checkbox" name="exponent">
+<br>
+<br>
+values (separated by any delimieter):
+    <input id="id_values" type="text" value="1 2 3 4 5"> <input type="button" value="random" onclick="randomize()"/>
+<br>
+<br>
+delimiter (initial value is space):
+    <input id="id_delimiter" type="text" value=" " size="4">
+<br>
+<br>
+goal:<input id="goal" type="text" value="1"></input>
+<br>
+<input type="button" value="solve" onclick="solve()"/>
+  </form>
+    <div id='id-board'>
+    </div>
+
+

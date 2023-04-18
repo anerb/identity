@@ -1,0 +1,43 @@
+.operand {
+  position: relative;
+}
+.minus-left {
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  opacity: 0;
+}
+.minus-right {
+  position: absolute;
+  left: 40px;
+  top: 20px;
+  opacity: 0;
+}
+.plus {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  opacity: 0;
+}
+.vinculum {
+  position: absolute;
+  left: 10px;
+  top: 40px;
+  opacity: 0;
+}
+.times {
+  position: absolute;
+  left: 30px;
+  top: 10px;
+  opacity: 0;
+}
+.value {
+  position: absolute;
+  left: 30px;
+  top: 20px;
+  opacity: 1.0;
+}
+
+.operation:hover{
+  opacity: 1.0;
+}

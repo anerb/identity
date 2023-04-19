@@ -386,21 +386,103 @@ function testfindone() {
   var ii = 42;
 }
 
+function parseValues() {
+  var values_str = $('#id_values').val();
+  var delimiter = $('#id_delimiter').val();
+  var values = values_str.split(delimiter);
+  return values;
+}
+
+function isPrime(candidate) {
+  let primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541];
+  return primes.includes(candidate);
+}
+
+function isEasy(candidate) {
+  let easy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+    2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24,
+    3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36,
+    4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48,
+    5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60,
+    6, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+    7, 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84,
+    8, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96,
+    9, 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, 99, 108,
+    10, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120,
+    11, 11, 22, 33, 44, 55, 66, 77, 88, 99, 110, 121, 132,
+    12, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120, 132, 144];
+    return easy.includes(candidate);
+}
+
+function validCandidate(candidate) {
+  let banned = [0, 1];
+  if (banned.includes(candidate)) {
+    return false;
+  }
+
+  var primes = $('#primes').val();
+  if (isPrime(candidate) && !primes) {
+    return false;
+  }
+
+  var easy = $('#easy').val();
+  if (!isEasy(candidate) && easy) {
+    return false;
+  }
+
+
+  return true;
+}
+
 function randomize() {
-  nums = [Math.floor(Math.random()*90) + 9,
+  for (let i = 0; i < 100; i++) {
+    randomizeOnce();
+    let solvable = check();
+    if (solvable) {
+      break;
+    }
+  }
+}
+
+function randomizeOnce() {
+  var values_str = $('#id_values').val();
+  var delimiter = $('#id_delimiter').val();
+  var values = values_str.split(delimiter);
+
+  var nums = [Math.floor(Math.random()*90) + 9,
           Math.floor(Math.random()*90) + 9,
           Math.floor(Math.random()*9) + 2,
           Math.floor(Math.random()*90) + 9,
           Math.floor(Math.random()*9) + 2];
-  $('#id_values').val(nums.join(' '));
+
+  var numValues = parseValues().length;
+  var keep = [];
+  for (var i = 0; i < numValues; i++) {
+    let candidate = 0;
+    while (keep.includes(candidate) || !validCandidate(candidate)) {
+      candidate =  Math.floor(Math.random()*98) + 2;
+    }
+    keep.push(candidate);
+  }
+  $('#id_values').val(keep.join(' '));
 }
 
-function solve() {
+function check() {
+  var checkEl = $('#check').get(0);
+  solve();
+  if (messages.length > 0) {
+    checkEl.innerHTML = "Solution Exists";
+    return true;
+  } else {
+    checkEl.innerHTML = "No Solution";
+    return false;
+  }
+}
+
+function solve_more() {
   var goal = $('#goal').val();
   goal = parseInt(goal);
-  var values_str = $('#id_values').val();
-  var delimiter = $('#id_delimiter').val();
-  var values = values_str.split(delimiter);
+  var values = parseValues();
   for (var v = 0; v < values.length; v++) {
     var value = values[v];
     value = parseInt(value);
@@ -429,9 +511,46 @@ function solve() {
     funcs.push(divA);
     funcs.push(divB);
   }
-  console.log(funcs);
+  find_more(values, funcs, goal);
+}
+
+
+function solve() {
+  var goal = $('#goal').val();
+  goal = parseInt(goal);
+  var values = parseValues();
+  for (var v = 0; v < values.length; v++) {
+    var value = values[v];
+    value = parseInt(value);
+    if (isNaN(value)) {
+      console.log("Could not parse int: ", values[v]);
+    }
+    values[v] = value;
+  }
+  messages = [];
+  var funcs = [];
+  if ($('#exponent').is(':checked')) {
+    funcs.push(expA);
+    funcs.push(expB);
+  }
+  if ($('#add').is(':checked')) {
+    funcs.push(add);
+  }
+  if ($('#subtract').is(':checked')) {
+    funcs.push(subA);
+    funcs.push(subB);
+  }
+  if ($('#multiply').is(':checked')) {
+    funcs.push(mult);
+  }
+  if ($('#divide').is(':checked')) {
+    funcs.push(divA);
+    funcs.push(divB);
+  }
   find_one(values, funcs, goal);
-  
+}
+
+function showResults() {  
   $('#id-board').empty();
   $('#id-board').append("Done<br>");
   for (var m = 0; m < messages.length; m++) {
@@ -445,10 +564,23 @@ function find_one(n, funcs, goal) {
   for (var i = 0; i < n.length; i++) {
     steps.push(n[i]);
     var others = n.slice(0, i).concat(n.slice(i+1, n.length));
-    identity(others, steps, funcs, goal);
+    let one_max_solution = 1;
+    identity(others, steps, funcs, goal, one_max_solution);
     steps.pop();
   } 
 }
+
+function find_more(n, funcs, goal) {
+  var steps = [];
+  for (var i = 0; i < n.length; i++) {
+    steps.push(n[i]);
+    var others = n.slice(0, i).concat(n.slice(i+1, n.length));
+    let max_solutions = 4;
+    identity(others, steps, funcs, goal, 12);
+    steps.pop();
+  } 
+}
+
 
 function computeVerbose(steps) {
   var op = steps[2];
@@ -491,7 +623,7 @@ function testFindOne() {
  }
 }
 
-function identity(n, steps, funcs, goal) {
+function identity(n, steps, funcs, goal, max_solutions) {
   if (n.length == 0) {
     var val = compute(steps);
     if (val == goal) {
@@ -499,9 +631,9 @@ function identity(n, steps, funcs, goal) {
       messages.push(verbose.str);
     }
   }
-  for (var i = 0; i < n.length && messages.length < 1; i++) {
+  for (var i = 0; i < n.length && messages.length < max_solutions; i++) {
     steps.push(n[i]);
-    for (var f = 0; f < funcs.length && messages.length < 1; f++) {
+    for (var f = 0; f < funcs.length && messages.length < max_solutions; f++) {
       steps.push(funcs[f]);
       var intermediate_val = compute(steps);
       // eliminate NaN intermediate values
@@ -515,7 +647,7 @@ function identity(n, steps, funcs, goal) {
         continue;
       }
       var others = n.slice(0, i).concat(n.slice(i+1, n.length));
-      identity(others, steps, funcs, goal);
+      identity(others, steps, funcs, goal, max_solutions);
       steps.pop();
     }
     steps.pop();

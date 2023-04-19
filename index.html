@@ -17,6 +17,11 @@
 <label for="divide">/</label><input id="divide"   type="checkbox" name="divide" checked>  
 <label for="exponent">^ (makes things much easier)</label><input id="exponent" type="checkbox" name="exponent">
 <br>
+<label for="primes">use two-digit-primes</label><input id="primes" type="checkbox" name="primes" checked>
+<label for="easy">restrict to 12x12 times-tables</label><input id="easy" type="checkbox" name="easy">
+<br>
+<br>
+Note: If you want 3 numbers to be randomly created, make a list of any 3 numbers and click [random].
 <br>
 values (separated by any delimieter):
     <input id="id_values" type="text" value="1 2 3 4 5"> <input type="button" value="random" onclick="randomize()"/>
@@ -28,8 +33,14 @@ delimiter (initial value is space):
 <br>
 goal:<input id="goal" type="text" value="1"></input>
 <br>
-<input type="button" value="solve" onclick="solve()"/>
-  </form>
+<input type="button" value="check" onclick="check()"/> <div id="check"></div>
+<br>
+<input type="button" value="solve more" onclick="solve_more()"/>
+<br>
+
+<input type="button" value="show results" onclick="showResults()"/>
+<br>
+</form>
     <div id='id-board'>
     </div>
 
